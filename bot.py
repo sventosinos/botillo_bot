@@ -1,7 +1,9 @@
 import requests
+import pandas as pd
 import config
+
 from bottle import (
-    run, post, request as bottle_request
+    run, post, response, request as bottle_request
 )
 
 def get_chat_id(data):
@@ -11,6 +13,10 @@ def get_chat_id(data):
 def get_message(data):
     message_text = data['message']['text']
     return message_text
+
+def get_author_name(data):
+    author_name = data['message']['from']['first_name']
+    return author_name
 
 def send_message(prepared_data):
     """
@@ -25,21 +31,35 @@ def change_text_message(text):
     """
     return text[::-1]
 
+def define_answer(data):
+    text = get_message(data)
+    if 'barcos' in text:
+       return boats_and_hoes()
+    if 'putas' in text:
+        return text.replace('putas', 'campamentos')   
+    if 'campamentos' in text:
+        return "{author} se va de putas".format(author=get_author_name(data))
+
+def boats_and_hoes():
+    return 'y putas'    
+
 def prepare_data_for_answer(data):
-    answer = change_text_message(get_message(data))
+    answer = define_answer(data)
 
-    json_data = {
-        "chat_id": get_chat_id(data),
-        "text": answer
-    }
+    if pd.notnull(answer):
+        json_data = {
+            "chat_id": get_chat_id(data),
+            "text": answer
+        }
 
-    return json_data
+        return json_data    
 
 @post('/')
 def main():
     data = bottle_request.json
     answer_data = prepare_data_for_answer(data)
-    send_message(answer_data)
+    if pd.notnull(answer_data):
+        send_message(answer_data)
 
     return response
 

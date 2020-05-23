@@ -1,1 +1,3 @@
-BOT_URL = 'sample url'
+# add your telegram token here; it should be like https://api.telegram.org/bot12345678:SOMErAn2dom/
+
+BOT_URL = 'https://api.telegram.org/bot<YOUR_TOKEN>/' 
