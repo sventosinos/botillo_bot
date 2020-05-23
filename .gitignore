@@ -2,3 +2,4 @@ ngrok.exe
 ngrok
 config.py
 .DS_Store
+__pycache__
